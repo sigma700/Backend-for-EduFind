@@ -4,6 +4,8 @@ import "dotenv/config";
 import cors from "cors";
 // import mongoose from "mongoose";
 import { schoolRouter } from "./routes/v1/schoolRouter.js";
+//this allows us to read data from cookies in our requset
+import cookieParser from "cookie-parser";
 import { collectionRouter } from "./routes/v1/collectionRouter.js";
 import { authRoute } from "./routes/v1/authRoute.js";
 // import { rankSchools } from "./controllers/schoolController.js";

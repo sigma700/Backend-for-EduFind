@@ -1,10 +1,16 @@
 //here we will do all the logic for users and also deal with authentication
-import CryptoJS from "crypto-js";
-import { sendVerMail, welcoMail } from "../../resend/email.js";
+// import CryptoJS from "crypto-js";
+import {
+  sendResEmail,
+  sendResetSuccess,
+  sendVerMail,
+  welcoMail,
+} from "../../resend/email.js";
 import { genJwToken } from "../../utils/genJwToken.js";
 import { generateToken } from "../../utils/genToken.js";
 import { User } from "../database/models/user.js";
 import bcrypt from "bcrypt";
+import { nanoid } from "nanoid";
 
 export const signUp = async (req, res) => {
   const { name, email, password } = req.body;
@@ -34,6 +40,7 @@ export const signUp = async (req, res) => {
       email,
       password: hashedPassword,
       verificationToken: verToken,
+
       //   isVerified,
       verificationTokenExpiresAt: Date.now() + 24 * 60 * 1000,
     });
@@ -79,7 +86,7 @@ export const verifEmail = async (req, res) => {
     }
 
     targetUser.isVerified = true;
-    targetUser.verificationToken = undefined;
+    targetUser.verificationToken = undefined; //let it dissapear after the user is verified
     targetUser.verificationTokenExpiresAt = undefined;
 
     await targetUser.save(); // this part makes sure that it is chanded in the database
@@ -156,7 +163,7 @@ export const logIn = async (req, res) => {
     console.log(error);
   }
 };
-
+//function to allow the user to logout when they are already logged in !
 export const logOut = async (req, res) => {
   res.clearCookie("token");
   res.status(200).json({
@@ -166,27 +173,93 @@ export const logOut = async (req, res) => {
 };
 
 //for forgot password :
+//the user has to send their email adress to us so that we can help them reset their password after they click forgot password
 
-export const resetPass = async (req, res) => {
-  const { email } = req.body;
-
+export const forgotPassword = async (req, res) => {
   try {
+    const { email } = req.body;
     const user = await User.findOne({ email });
-
     if (!user) {
-      res.status(400).json({
-        success: false,
-        message: "User not found !",
-      });
-      console.log("User not found");
+      throw new Error("User could not be found !");
     }
 
-    const resetPasswordToken = crypto.randomBytes(32).toString("hex");
-    const resetPasswordExpriresAt = Date.now() + 24 * 60 * 60 * 1000; //it expires after one hour
+    //now we will have to create a new reset password token to allow the user to set up the new password
 
+    const resetPasswordToken = nanoid(64); //used nanoid intead of crypto
     user.resetPasswordToken = resetPasswordToken;
-    user.resetPasswordExpriresAt = resetPasswordExpriresAt;
+    //giving the expiration date to allow it not to last for ever
+    const resetPasswordExpiresAt = Date.now() + 1 * 60 * 60 * 1000;
+    user.resetPasswordExpriresAt = resetPasswordExpiresAt;
 
     await user.save();
-  } catch (error) {}
+
+    //sending the reset email to the user by means of resend just using the same template as that one for the welocme page
+
+    await sendResEmail(
+      user.email,
+      `${process.env.CLIENT_URL}/reset-password/${{ resetPasswordToken }}`
+    );
+    res.status(200).json({
+      success: true,
+      message: "The reset email was successfully sent !",
+      data: user,
+    });
+
+    await user.save();
+  } catch (error) {
+    console.log("An error occured with sending the email :", error);
+    res.status(400).json({
+      success: false,
+      message: "An error occured the user could not reset the password !",
+    });
+  }
+};
+
+//function for actually creating the new password
+
+export const restPass = async (req, res) => {
+  const { token } = req.params; //since we get the token from the url params
+  const { password } = req.body;
+
+  try {
+    //find the user by their personal resetToken
+    const user = await User.findOne({
+      resetPasswordToken: token,
+      resetPasswordExpriresAt: { $gt: Date.now() },
+    });
+
+    if (!user) {
+      console.log("The token might have expired or incorrect !");
+      return res.status(400).json({
+        success: false,
+        message: "Invalid or expired token !",
+      });
+    }
+    //hash back the password that they have passed onto us back into the database
+
+    const newHashedPass = await bcrypt.hash(password, 10);
+
+    user.password = newHashedPass;
+    user.resetPasswordToken = undefined; //dissapear after all this is done
+    user.resetPasswordExpriresAt = undefined;
+    //make sure to save the user into the database with the new changed values
+
+    await user.save();
+
+    //send them the success meassage via an email
+
+    await sendResetSuccess(user.email);
+
+    res.status(200).json({
+      success: true,
+      message: "Password was reset successfully!",
+      data: user,
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: "Could not reset the password as requested !",
+    });
+    console.log(error.message);
+  }
 };

@@ -28,3 +28,31 @@ export const welcoMail = async (email, name) => {
     console.log("Error sending verification error", error);
   }
 };
+
+//fucntion for sending the email to the user to allow them to reset  their email after they had forgotten
+
+export const sendResEmail = async (email, resetUrl) => {
+  try {
+    const { data, error } = await resend.emails.send({
+      from: "Acme <onboarding@resend.dev>",
+      to: ["allankirimi65@gmail.com"],
+      subject: "Reset your password",
+      html: `Click <a href="${resetUrl}">Here </a> to reset your password`,
+    });
+  } catch (error) {
+    console.log("Error sending verification error", error);
+  }
+};
+
+export const sendResetSuccess = async (email) => {
+  try {
+    const { data, error } = await resend.emails.send({
+      from: "Acme <onboarding@resend.dev>",
+      to: ["allankirimi65@gmail.com"],
+      subject: "Password Reset Successfully :)",
+      html: `Your password was successfully reset now you can go back and continue browsing through our website`,
+    });
+  } catch (error) {
+    console.log("Error sending verification error", error);
+  }
+};
