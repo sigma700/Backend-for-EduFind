@@ -1,4 +1,4 @@
-import express from "express";
+import express, { application } from "express";
 import { connectMongo } from "./database/config.js";
 import "dotenv/config";
 import cors from "cors";
@@ -21,6 +21,8 @@ connectMongo();
 app.use(express.json());
 
 app.use(cors());
+
+app.use(cookieParser()); // for parsing the cookies
 
 app.use(
   cors({

@@ -263,3 +263,28 @@ export const restPass = async (req, res) => {
     console.log(error.message);
   }
 };
+
+//this is the one called after the next() function has been called in the middleware function
+export const checkAuth = async (req, res) => {
+  try {
+    const user = await User.findById(req.userId);
+    if (!user) {
+      return res.status(400).json({
+        success: false,
+        message: "User could not be found or may be logged out !",
+      });
+    }
+    res.status(200).json({
+      success: true,
+      message: "Here is the authenticated user !",
+      data: { ...user._doc, password: undefined },
+    });
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: "Unable to authenticate the user !",
+    });
+
+    console.log(error.message);
+  }
+};

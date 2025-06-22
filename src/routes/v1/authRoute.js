@@ -1,5 +1,6 @@
 import { Router } from "express";
 import {
+  checkAuth,
   forgotPassword,
   logIn,
   logOut,
@@ -7,6 +8,7 @@ import {
   signUp,
   verifEmail,
 } from "../../controllers/userController.js";
+import { checkIsLogged } from "../../../middleware/checkToken.js";
 
 const authRoute = Router();
 
@@ -16,9 +18,6 @@ authRoute.post("/login", logIn);
 authRoute.post("/forgot", forgotPassword);
 authRoute.post("/signup/verify", verifEmail);
 authRoute.post("/reset-pass/:token", restPass);
-
-// authRoute.get("/login", createAnd);
-
-// authRoute.get("/logout", createAnd);
+authRoute.get("/check-auth", checkIsLogged, checkAuth);
 
 export { authRoute };
