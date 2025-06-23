@@ -55,7 +55,7 @@ export const signUp = async (req, res) => {
     res.status(201).json({
       success: true,
       message: "A new user was successfully created !",
-      data: newUser,
+      user: newUser, //for production purposes make sure to chheck this area because it has returned the user's password back to them which is not a good practice to partake
     });
   } catch (error) {
     res.status(400).json({
