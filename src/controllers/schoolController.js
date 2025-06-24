@@ -180,3 +180,49 @@ export const getCategories = async (req, res) => {
     console.log(error.message);
   }
 };
+
+//for creating a new school for the admins
+
+export const createSchool = async (req, res) => {
+  const { name, location, system, contacts, category } = req.body;
+
+  // Basic validation
+  if (!name || !location) {
+    return res.status(400).json({
+      success: false,
+      message: "Name and location are required fields!",
+    });
+  }
+
+  try {
+    // Check if school exists
+    const exists = await School.findOne({ name: name });
+    if (exists) {
+      return res.status(400).json({
+        success: false,
+        message: "School already exists!",
+      });
+    }
+
+    // Create the school
+    const school = await School.create({
+      name,
+      location,
+      system,
+      contacts,
+      category,
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "School created successfully",
+      data: school,
+    });
+  } catch (error) {
+    console.error("Error creating school:", error);
+    res.status(500).json({
+      success: false,
+      message: error.message || "Failed to create school",
+    });
+  }
+};

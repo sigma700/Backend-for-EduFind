@@ -6,7 +6,7 @@ const schoolsSchema = Schema(
   {
     rank: Number,
     name: { type: String, required: true },
-    type: { type: String, required: true },
+    type: { type: String },
     fee: {
       min: Number,
       max: Number,
@@ -18,9 +18,9 @@ const schoolsSchema = Schema(
     },
     description: String,
     images: [String],
-    system: [{ type: String, required: true }],
-    population: { type: String, required: true },
-    level: { type: String, required: true },
+    system: [{ type: String }],
+    population: { type: String },
+    level: { type: String },
   },
   {
     timestamps: true,
