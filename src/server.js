@@ -20,17 +20,13 @@ connectMongo();
 
 app.use(express.json());
 
-app.use(cors());
-
 app.use(cookieParser()); // for parsing the cookies
 
 app.use(
   cors({
-    origin: [
-      "http://localhost:5371",
-      // "https://react-final-schoolflex-2.onrender.com/",
-    ],
+    origin: "http://localhost:5371",
     credentials: true,
+    methods: ["GET", "POST", "DELETE"],
   })
 );
 

@@ -152,3 +152,31 @@ export const rankSchools = async (req, res) => {
     });
   }
 };
+
+//for getting all the school categories
+
+export const getCategories = async (req, res) => {
+  const { category } = req.params;
+  try {
+    const categoriedSchools = await School.find({ category: category });
+
+    if (categoriedSchools.length === 0) {
+      return res.status(404).json({
+        sucess: false,
+        message: "Could not find the schools of that category",
+      });
+    }
+    res.status(200).json({
+      success: true,
+      message: "Here are the categories",
+      data: categoriedSchools,
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error,
+    });
+
+    console.log(error.message);
+  }
+};

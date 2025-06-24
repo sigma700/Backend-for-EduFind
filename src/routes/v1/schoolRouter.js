@@ -2,6 +2,7 @@ import { Router } from "express";
 import {
   findSchool,
   findSchoolExact,
+  getCategories,
   getSChoolByid,
   getSchools,
   rankSchools,
@@ -14,4 +15,5 @@ schoolRouter.get("/schools/ranked", rankSchools);
 // schoolRouter.post("/schools/create", createSchool);
 schoolRouter.get("/schools/search-exact", findSchoolExact);
 schoolRouter.get("/schools", getSchools);
-schoolRouter.get("/schools/:id", getSChoolByid);
+schoolRouter.get("/schools/category/:category", getCategories); //this is working well if its in params
+schoolRouter.get("/schools/id/:id", getSChoolByid);
