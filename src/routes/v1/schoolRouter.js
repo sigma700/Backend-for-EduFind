@@ -16,4 +16,4 @@ schoolRouter.get("/schools/ranked", rankSchools);
 schoolRouter.get("/schools/search-exact", findSchoolExact);
 schoolRouter.get("/schools", getSchools);
 schoolRouter.get("/schools/category/:category", getCategories); //this is working well if its in params
-schoolRouter.get("/schools/id/:id", getSChoolByid);
+schoolRouter.get("/schools/id/:id", getSChoolByid); //fuck this shit i don't like how she is always s
