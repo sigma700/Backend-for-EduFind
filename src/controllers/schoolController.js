@@ -184,7 +184,7 @@ export const getCategories = async (req, res) => {
 //for creating a new school for the admins
 
 export const createSchool = async (req, res) => {
-  const { name, location, system, contacts, category } = req.body;
+  const { name, location, system, contacts, category, fee } = req.body;
 
   // Basic validation
   if (!name || !location) {
@@ -211,6 +211,7 @@ export const createSchool = async (req, res) => {
       system,
       contacts,
       category,
+      fee,
     });
 
     res.status(201).json({
