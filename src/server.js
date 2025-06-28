@@ -26,7 +26,7 @@ app.use(cookieParser()); // for parsing the cookies
 
 app.use(
   cors({
-    origin: "http://localhost:5371",
+    origin: "https://edufind-ryn2.onrender.com",
     credentials: true,
     methods: ["GET", "POST", "DELETE"],
   })
