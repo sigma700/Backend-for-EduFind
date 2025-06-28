@@ -21,6 +21,7 @@ const schoolsSchema = Schema(
     system: [{ type: String }],
     population: { type: String },
     level: { type: String },
+    category: { type: String },
   },
   {
     timestamps: true,
