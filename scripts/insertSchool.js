@@ -519,7 +519,7 @@ export const insertSchools = async () => {
     } else {
       console.log("Mongo db was connected successfully for seeding the data !");
     }
-
+    // const exist = await School.findMany({ schools });
     const newData = await School.insertMany(schools);
     console.log(`Inserted ${newData.length} schools successfully !`);
 
