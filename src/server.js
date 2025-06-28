@@ -8,7 +8,7 @@ import { schoolRouter } from "./routes/v1/schoolRouter.js";
 import cookieParser from "cookie-parser";
 import { collectionRouter } from "./routes/v1/collectionRouter.js";
 import { authRoute } from "./routes/v1/authRoute.js";
-import { insertSchools } from "../scripts/insertSchool.js";
+// import { insertSchools } from "../scripts/insertSchool.js";
 // import { rankSchools } from "./controllers/schoolController.js";
 // import { getSchools } from "./controllers/schoolController.js";
 
@@ -17,7 +17,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 connectMongo();
-insertSchools();
+// insertSchools();
 // rankSchools();
 
 app.use(express.json());
